@@ -6,7 +6,5 @@ Project RFID-Controll:
 		RFID-Controller
 		RFID-Reciver
 
-Project LED-Shot:
-	"A simple sound controlled led impulse."
-	parts:
-		LED-Shot
+Project Sound2Light:
+	"A simple sound controlled multi led impulse."
