@@ -1,6 +1,12 @@
 My Arduino Projects
-____________________________________
 
-Feel free to use and edit my program.
-Most of the stuff here are schoolprojects.
-____________________________________
+Project RFID-Controll:
+	"A task controller controlled via RFID that send tasks to another Arduino."
+	parts:
+		RFID-Controller
+		RFID-Reciver
+
+Project LED-Shot:
+	"A simple sound controlled led impulse."
+	parts:
+		LED-Shot
