@@ -57,8 +57,8 @@ void setup() {
   mfrc522.PCD_Init();
   
   //pin define
-  pinMode(0, OUTPUT);
-  pinMode(1, OUTPUT);
+  pinMode(A4, OUTPUT);
+  pinMode(A5, OUTPUT);
   pinMode(2, OUTPUT);
   pinMode(3, OUTPUT);
   pinMode(4, OUTPUT);
@@ -155,11 +155,11 @@ void activation() {
   if (countActions==1) {
     if (action1 == false) {
       action1 = true;
-      digitalWrite(0, HIGH);
+      digitalWrite(A4, 255);
     }
     else {
       action1 = false;
-      digitalWrite(0, LOW);
+      digitalWrite(A4, 0);
     }
   }
 
@@ -167,11 +167,11 @@ void activation() {
   if (countActions==2) {
     if (action2 == false) {
       action2 = true;
-      digitalWrite(1, HIGH);
+      digitalWrite(A5, 255);
     }
     else {
       action2 = false;
-      digitalWrite(1, LOW);
+      digitalWrite(A5, 0);
     }
   }
 
@@ -207,6 +207,10 @@ void activation() {
       action7 = false;
       action8 = false;
       digitalWrite(4, HIGH);
+      digitalWrite(5, LOW);
+      digitalWrite(6, LOW);
+      digitalWrite(7, LOW);
+      digitalWrite(8, LOW);
     }
     else {
       action5 = false;
@@ -222,6 +226,10 @@ void activation() {
       action7 = false;
       action8 = false;
       digitalWrite(5, HIGH);
+      digitalWrite(4, LOW);
+      digitalWrite(6, LOW);
+      digitalWrite(7, LOW);
+      digitalWrite(8, LOW);
     }
     else {
       action6 = false;
@@ -237,6 +245,10 @@ void activation() {
       action6 = false;
       action8 = false;
       digitalWrite(6, HIGH);
+      digitalWrite(4, LOW);
+      digitalWrite(5, LOW);
+      digitalWrite(7, LOW);
+      digitalWrite(8, LOW);
     }
     else {
       action7 = false;
@@ -252,6 +264,10 @@ void activation() {
       action6 = false;
       action7 = false;
       digitalWrite(7, HIGH);
+      digitalWrite(4, LOW);
+      digitalWrite(5, LOW);
+      digitalWrite(6, LOW);
+      digitalWrite(8, LOW);
     }
     else {
       action8 = false;
@@ -279,10 +295,10 @@ void ledTable() {
   if (action2 == true) strip.setPixelColor(1, 0, 100, 0); else strip.setPixelColor(1, 0, 0, 0);
   if (action3 == true) strip.setPixelColor(2, 0, 100, 0); else strip.setPixelColor(2, 0, 0, 0);
   if (action4 == true) strip.setPixelColor(3, 0, 100, 0); else strip.setPixelColor(3, 0, 0, 0);
-  if (action5 == true) strip.setPixelColor(4, 20, 100, 20); else strip.setPixelColor(4, 0, 0, 0);
-  if (action6 == true) strip.setPixelColor(5, 20, 100, 20); else strip.setPixelColor(5, 0, 0, 0);
-  if (action7 == true) strip.setPixelColor(6, 20, 100, 20); else strip.setPixelColor(6, 0, 0, 0);
-  if (action8 == true) strip.setPixelColor(7, 20, 100, 20); else strip.setPixelColor(7, 0, 0, 0);
-  if (action9 == true) strip.setPixelColor(8, 33, 122, 6); else strip.setPixelColor(8, 0, 0, 0);
+  if (action5 == true) strip.setPixelColor(4, 255, 83, 0); else strip.setPixelColor(4, 0, 0, 0);
+  if (action6 == true) strip.setPixelColor(5, 255, 83, 0); else strip.setPixelColor(5, 0, 0, 0);
+  if (action7 == true) strip.setPixelColor(6, 255, 83, 0); else strip.setPixelColor(6, 0, 0, 0);
+  if (action8 == true) strip.setPixelColor(7, 255, 83, 0); else strip.setPixelColor(7, 0, 0, 0);
+  if (action9 == true) strip.setPixelColor(8, 255, 0, 0); else strip.setPixelColor(8, 0, 0, 0); 
 }
 

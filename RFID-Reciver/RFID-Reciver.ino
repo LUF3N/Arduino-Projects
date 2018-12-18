@@ -50,14 +50,15 @@ void loop() {
 }
 
 void pinCheck() {
-  stat1 = digitalRead(2);
-  stat2 = digitalRead(3);
-  stat3 = digitalRead(4);
-  stat4 = digitalRead(5);
-  stat5 = digitalRead(6);
-  stat6 = digitalRead(7);
-  stat7 = digitalRead(8);
-  stat8 = digitalRead(9);
+  stat1 = digitalRead(8);
+  stat2 = digitalRead(9);
+  stat3 = digitalRead(2);
+  stat4 = digitalRead(3);
+  stat5 = digitalRead(4);
+  stat6 = digitalRead(5);
+  stat7 = digitalRead(6);
+  stat8 = digitalRead(7);
+
 
   
   Serial.println("------------Pin Stat------------");
