@@ -1,14 +1,4 @@
-/* 
-###################################################################################################################################################################
-#      _____    ______   _____   _____        __  _____           _           _             _____                   _                    _   _                    #
-#      |  __ \  |  ____| |_   _| |  __ \      / / |  __ \         | |         (_)           / ____|                 | |                  | | | |                  #
-#      | |__) | | |__      | |   | |  | |    / /  | |__) |   ___  | |   __ _   _   ______  | |        ___    _ __   | |_   _ __    ___   | | | |   ___   _ __     #
-#      |  _  /  |  __|     | |   | |  | |   / /   |  _  /   / _ \ | |  / _` | | | |______| | |       / _ \  | '_ \  | __| | '__|  / _ \  | | | |  / _ \ | '__|    #
-#      | | \ \  | |       _| |_  | |__| |  / /    | | \ \  |  __/ | | | (_| | | |          | |____  | (_) | | | | | | |_  | |    | (_) | | | | | |  __/ | |       #
-#      |_|  \_\ |_|      |_____| |_____/  /_/     |_|  \_\  \___| |_|  \__,_| |_|           \_____|  \___/  |_| |_|  \__| |_|     \___/  |_| |_|  \___| |_|       #
-#                                                           with LED status monitor By Steffen Hildebrand (1.0)                                                   #
-###################################################################################################################################################################
-*/
+//RFID-Controller by Steffen Hildebrand
 //===Variablen und Defines===
 // RFID-Cards (Admin Keys)
 #define CARD1 2563480 //Steffen
@@ -20,14 +10,14 @@
 // RFID-Reader
 #include <SPI.h>
 #include <MFRC522.h>
-#define SS_PIN 10
-#define RST_PIN 9
+#define SS_PIN 53
+#define RST_PIN 5
 MFRC522 mfrc522(SS_PIN, RST_PIN);
 float code;
 
 // LED-Monitor
 #include <Adafruit_NeoPixel.h>
-Adafruit_NeoPixel strip = Adafruit_NeoPixel(10, 8, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(18, 8, NEO_GRB + NEO_KHZ800);
 int realLed = 0;
 
 //Selection
@@ -42,12 +32,17 @@ boolean action5 = false;
 boolean action6 = false;
 boolean action7 = false;
 boolean action8 = false;
-boolean action9 = false;
+boolean action9 = false; //public mode
 
 //Actions
 boolean publicMode = false;
 boolean adminKey = false;
 int p = 0; //For Pin toggle off
+
+//Sleeptimer
+int sleepTime = 500;
+int sleepTimer = 0;
+boolean isSleeping = false;
 
 //===Setup und Loop===
 void setup() {
@@ -57,17 +52,17 @@ void setup() {
   mfrc522.PCD_Init();
   
   //pin define
-  pinMode(A4, OUTPUT);
-  pinMode(A5, OUTPUT);
-  pinMode(2, OUTPUT);
-  pinMode(3, OUTPUT);
-  pinMode(4, OUTPUT);
-  pinMode(5, OUTPUT);
-  pinMode(6, OUTPUT);
-  pinMode(7, OUTPUT);
+  pinMode(22, OUTPUT);
+  pinMode(23, OUTPUT);
+  pinMode(24, OUTPUT);
+  pinMode(25, OUTPUT);
+  pinMode(26, OUTPUT);
+  pinMode(27, OUTPUT);
+  pinMode(28, OUTPUT);
+  pinMode(29, OUTPUT);
 
   //reset data pins to off
-  for(p=0; p<=7; p++) {
+  for(p=22; p<=7; p++) {
     digitalWrite(p, LOW);
     Serial.println(p);
   }
@@ -84,11 +79,33 @@ void loop() {
      ledTable();
      RFIDcompare();
      strip.show();
+     SleepCheck();
 }
 
 
 
 //===Funktionen===
+
+void SleepCheck() {
+  if (code == 0 && isSleeping == false) {
+    sleepTimer++;
+    Serial.println(sleepTimer);
+  }
+  if (code != 0) {
+    sleepTimer = 0;
+    isSleeping = false;
+    Serial.println(code);
+    Serial.print("isSleeping=");
+    Serial.println(isSleeping);
+    Serial.println("sleeptimer reset");
+    
+  }
+  if (sleepTimer >= sleepTime && isSleeping == false) {
+    Serial.println("now sleeping");
+    isSleeping = true;
+  }
+}
+
 void RFIDcheck() {
   if ( ! mfrc522.PICC_IsNewCardPresent()) {
     //Serial.println("PICC_IsNewCardPresent returned"); 
@@ -120,6 +137,7 @@ void RFIDcompare() {
 }
 
 void RFIDtime() {
+    SleepCheck();
     code = 0;
     delay(500);
     mfrc522.PCD_AntennaOff();
@@ -143,10 +161,11 @@ void selector() {
   countActions++;
     if (countActions==10) {
     countActions = 1;
+    strip.setPixelColor(8, 0, 0, 0);
   }
   realLed = countActions-1;
   strip.setPixelColor(realLed, 0, 0, 100);
-  //strip.setPixelColor(realLed-1, 0, 0, 0);
+  strip.setPixelColor(realLed-1, 0, 0, 0);
   Serial.print("LED Nummer: ");
   Serial.println(realLed);
 }
@@ -155,11 +174,11 @@ void activation() {
   if (countActions==1) {
     if (action1 == false) {
       action1 = true;
-      digitalWrite(A4, 255);
+      digitalWrite(22, HIGH);
     }
     else {
       action1 = false;
-      digitalWrite(A4, 0);
+      digitalWrite(22, LOW);
     }
   }
 
@@ -167,11 +186,11 @@ void activation() {
   if (countActions==2) {
     if (action2 == false) {
       action2 = true;
-      digitalWrite(A5, 255);
+      digitalWrite(23, HIGH);
     }
     else {
       action2 = false;
-      digitalWrite(A5, 0);
+      digitalWrite(23, LOW);
     }
   }
 
@@ -179,11 +198,11 @@ void activation() {
   if (countActions==3) {
     if (action3 == false) {
       action3 = true;
-      digitalWrite(2, HIGH);
+      digitalWrite(24, HIGH);
     }
     else {
       action3 = false;
-      digitalWrite(2, LOW);
+      digitalWrite(24, LOW);
     }
   }
 
@@ -191,11 +210,11 @@ void activation() {
   if (countActions==4) {
     if (action4 == false) {
       action4 = true;
-      digitalWrite(3, HIGH);
+      digitalWrite(25, HIGH);
     }
     else {
       action4 = false;
-      digitalWrite(3, LOW);
+      digitalWrite(25, LOW);
     }
   }
 
@@ -206,15 +225,14 @@ void activation() {
       action6 = false;
       action7 = false;
       action8 = false;
-      digitalWrite(4, HIGH);
-      digitalWrite(5, LOW);
-      digitalWrite(6, LOW);
-      digitalWrite(7, LOW);
-      digitalWrite(8, LOW);
+      digitalWrite(26, HIGH);
+      digitalWrite(27, LOW);
+      digitalWrite(28, LOW);
+      digitalWrite(29, LOW);
     }
     else {
       action5 = false;
-      digitalWrite(4, LOW);
+      digitalWrite(26, LOW);
     }
   }
 
@@ -225,15 +243,14 @@ void activation() {
       action5 = false;
       action7 = false;
       action8 = false;
-      digitalWrite(5, HIGH);
-      digitalWrite(4, LOW);
-      digitalWrite(6, LOW);
-      digitalWrite(7, LOW);
-      digitalWrite(8, LOW);
+      digitalWrite(27, HIGH);
+      digitalWrite(28, LOW);
+      digitalWrite(29, LOW);
+      digitalWrite(26, LOW);
     }
     else {
       action6 = false;
-      digitalWrite(5, LOW);
+      digitalWrite(27, LOW);
     }
   }
 
@@ -244,15 +261,14 @@ void activation() {
       action5 = false;
       action6 = false;
       action8 = false;
-      digitalWrite(6, HIGH);
-      digitalWrite(4, LOW);
-      digitalWrite(5, LOW);
-      digitalWrite(7, LOW);
-      digitalWrite(8, LOW);
+      digitalWrite(28, HIGH);
+      digitalWrite(26, LOW);
+      digitalWrite(27, LOW);
+      digitalWrite(29, LOW);
     }
     else {
       action7 = false;
-      digitalWrite(6, LOW);
+      digitalWrite(28, LOW);
     }
   }
 
@@ -263,15 +279,14 @@ void activation() {
       action5 = false;
       action6 = false;
       action7 = false;
-      digitalWrite(7, HIGH);
-      digitalWrite(4, LOW);
-      digitalWrite(5, LOW);
-      digitalWrite(6, LOW);
-      digitalWrite(8, LOW);
+      digitalWrite(29, HIGH);
+      digitalWrite(26, LOW);
+      digitalWrite(27, LOW);
+      digitalWrite(28, LOW);
     }
     else {
       action8 = false;
-      digitalWrite(7, LOW);
+      digitalWrite(29, LOW);
     }
   }
 
@@ -291,14 +306,36 @@ void activation() {
 }
 
 void ledTable() {
-  if (action1 == true) strip.setPixelColor(0, 0, 100, 0); else strip.setPixelColor(0, 0, 0, 0);
-  if (action2 == true) strip.setPixelColor(1, 0, 100, 0); else strip.setPixelColor(1, 0, 0, 0);
-  if (action3 == true) strip.setPixelColor(2, 0, 100, 0); else strip.setPixelColor(2, 0, 0, 0);
-  if (action4 == true) strip.setPixelColor(3, 0, 100, 0); else strip.setPixelColor(3, 0, 0, 0);
-  if (action5 == true) strip.setPixelColor(4, 255, 83, 0); else strip.setPixelColor(4, 0, 0, 0);
-  if (action6 == true) strip.setPixelColor(5, 255, 83, 0); else strip.setPixelColor(5, 0, 0, 0);
-  if (action7 == true) strip.setPixelColor(6, 255, 83, 0); else strip.setPixelColor(6, 0, 0, 0);
-  if (action8 == true) strip.setPixelColor(7, 255, 83, 0); else strip.setPixelColor(7, 0, 0, 0);
-  if (action9 == true) strip.setPixelColor(8, 255, 0, 0); else strip.setPixelColor(8, 0, 0, 0); 
+  if (isSleeping==false) {
+      if (action1 == true) strip.setPixelColor(17, 0, 100, 0); else strip.setPixelColor(17, 0, 0, 0);
+      if (action2 == true) strip.setPixelColor(16, 0, 100, 0); else strip.setPixelColor(16, 0, 0, 0);
+      if (action3 == true) strip.setPixelColor(15, 0, 100, 0); else strip.setPixelColor(15, 0, 0, 0);
+      if (action4 == true) strip.setPixelColor(14, 0, 100, 0); else strip.setPixelColor(14, 0, 0, 0);
+      if (action5 == true) strip.setPixelColor(13, 255, 83, 0); else strip.setPixelColor(13, 0, 0, 0);
+      if (action6 == true) strip.setPixelColor(12, 255, 83, 0); else strip.setPixelColor(12, 0, 0, 0);
+      if (action7 == true) strip.setPixelColor(11, 255, 83, 0); else strip.setPixelColor(11, 0, 0, 0);
+      if (action8 == true) strip.setPixelColor(10, 255, 83, 0); else strip.setPixelColor(10, 0, 0, 0);
+      if (action9 == true) strip.setPixelColor(9, 255, 0, 0); else strip.setPixelColor(9, 0, 0, 0); 
+  }
+  if (isSleeping==true) {   
+      strip.setPixelColor(17, 0, 0, 0);
+      strip.setPixelColor(16, 0, 0, 0);
+      strip.setPixelColor(15, 0, 0, 0);
+      strip.setPixelColor(14, 0, 0, 0);
+      strip.setPixelColor(13, 0, 0, 0);
+      strip.setPixelColor(12, 0, 0, 0);
+      strip.setPixelColor(11, 0, 0, 0);
+      strip.setPixelColor(10, 0, 0, 0);
+      strip.setPixelColor(9, 0, 0, 0);
+      strip.setPixelColor(8, 0, 0, 0);
+      strip.setPixelColor(7, 0, 0, 0);
+      strip.setPixelColor(6, 0, 0, 0);
+      strip.setPixelColor(5, 0, 0, 0);
+      strip.setPixelColor(4, 0, 0, 0);
+      strip.setPixelColor(3, 0, 0, 0);
+      strip.setPixelColor(2, 0, 0, 0);
+      strip.setPixelColor(1, 0, 0, 0);
+      strip.setPixelColor(0, 0, 0, 0);
+  }
 }
 
